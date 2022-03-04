@@ -6,7 +6,7 @@ from aiogram.utils import executor
 from aiogram.utils.markdown import text, bold
 
 from configurations.messages import welcome_message
-from controlers import mark, pillage, suspicious
+from controlers import mark
 from configurations.create_bot import dp
 from keyboards.markup import main_menu
 from db import sqlite_db
@@ -33,8 +33,6 @@ async def cancel_handler(message: types.Message, state: FSMContext):
 
 
 mark.register_handlers_marks(dp)
-suspicious.register_handlers_persons(dp)
-pillage.register_handlers_pillages(dp)
 
 
 @dp.message_handler()
@@ -42,12 +40,8 @@ async def menu_buttons(message: types.Message):
     """
     This handler will be called when user sends any message except the commands
     """
-    if message.text == "Повідомити про мітку":
-        await message.reply("Натисність на, або введіть самостійно команду /mark", reply_markup=main_menu)
-    elif message.text == "Повідомити про підозрілу особу":
-        await message.reply("Натисність на, або введіть самостійно команду /persons", reply_markup=main_menu)
-    elif message.text == "Повідомити про випадки мародерства":
-        await message.reply("Натисність на, або введіть самостійно команду /pillage", reply_markup=main_menu)
+    if message.text == "Надати інформацію":
+        await message.reply("Натисність на, або введіть самостійно команду /provide_information", reply_markup=main_menu)
 
 
 if __name__ == '__main__':

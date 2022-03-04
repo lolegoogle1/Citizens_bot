@@ -1,2 +1,2 @@
-API_TOKEN = "< Your API TOKEN>"
-ADMIN_CHANNEL_ID = "< Admin channel ID for redirection > "
+API_TOKEN = None
+ADMIN_CHANNEL_ID = None

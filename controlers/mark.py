@@ -21,7 +21,7 @@ class FSMMark(StatesGroup):
     contacts = State()
 
 
-async def mark_start(message: types.Message):
+async def provide_information(message: types.Message):
     await FSMMark.information.set()
     await message.reply("Надайте нам всю інформацію, у текстовому форматі, яка може нам допомогти."
                         f"{example_info_message}"
@@ -33,7 +33,7 @@ async def load_info(message: types.Message, state: FSMContext):
         data['record_id'] = str(uuid.uuid4()).replace('-', '')
         data['information'] = message.text
     await FSMMark.next()
-    await message.reply("Введіть приблизну або точну адресу, у текстовому форматі, розсташування мітки"
+    await message.reply("Введіть приблизну або точну адресу, у текстовому форматі, події."
                         f"{cancel_message}", parse_mode=ParseMode.MARKDOWN, reply_markup=main_menu)
 
 
@@ -41,7 +41,7 @@ async def load_address(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['address'] = message.text
     await FSMMark.next()
-    await message.reply("Завантажте фото, на якому зафіксована мітка."
+    await message.reply("Завантажте фото."
                         f"{cancel_message}"
                         f"{skip_message}", parse_mode=ParseMode.MARKDOWN, reply_markup=main_menu)
 
@@ -50,7 +50,7 @@ async def load_photo(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['photo'] = message.photo[0].file_id
     await FSMMark.next()
-    await message.reply("Завантажте відео, на якому зафіксована мітка."
+    await message.reply("Завантажте відео."
                         f"{cancel_message}"
                         f"{skip_message}", parse_mode=ParseMode.MARKDOWN, reply_markup=main_menu)
 
@@ -100,13 +100,14 @@ async def skip_handler(message: types.Message, state: FSMContext):
             data['video'] = ""
         await FSMMark.next()
         await message.reply("Надайте ваші контакти для детального вияснення ситуації."
+                            "Натисніть на кпопку 'Надати контактні дані'"
                             f"{cancel_message}", parse_mode=ParseMode.MARKDOWN,
                             reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(
                                 KeyboardButton('Надати контактні дані', request_contact=True)))
 
 
 def register_handlers_marks(dsp: Dispatcher):
-    dsp.register_message_handler(mark_start, commands=['mark'], state=None)
+    dsp.register_message_handler(provide_information, commands=['provide_information'], state=None)
     dsp.register_message_handler(load_info, state=FSMMark.information)
     dsp.register_message_handler(load_address, state=FSMMark.address)
     dsp.register_message_handler(load_photo, content_types=['photo'], state=FSMMark.photo)
